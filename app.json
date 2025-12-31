@@ -14,8 +14,12 @@
       "backgroundColor": "#1a1412"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.dial.app"
+      "bundleIdentifier": "com.bufordeeds.dial",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +37,12 @@
     "plugins": [
       "expo-router",
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5332c711-aa21-4d09-bae9-fd8932ac825b"
+      }
+    }
   }
 }
