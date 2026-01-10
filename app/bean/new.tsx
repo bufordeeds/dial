@@ -1,4 +1,13 @@
-import { View, Text, TextInput, ScrollView, Pressable, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Pressable,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -44,11 +53,16 @@ export default function NewBeanScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-coffee-900" edges={["bottom"]}>
-      <ScrollView
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
-        contentContainerStyle={{ padding: 16 }}
-        keyboardShouldPersistTaps="handled"
+        keyboardVerticalOffset={100}
       >
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+          keyboardShouldPersistTaps="handled"
+        >
         <Card>
           <View className="mb-4">
             <Text className="text-cream-300 text-sm mb-2 uppercase tracking-wider">
@@ -118,6 +132,7 @@ export default function NewBeanScreen() {
           <Text className="text-cream-400">Cancel</Text>
         </Pressable>
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

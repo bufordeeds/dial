@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, FlatList, Pressable, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useState, useCallback } from "react";
 import { useLocalSearchParams, useRouter, useFocusEffect, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -145,7 +146,7 @@ export default function BeanDetailScreen() {
           {dialedShot && (
             <Card className="mt-4 border-2 border-espresso">
               <View className="flex-row items-center mb-3">
-                <Text className="text-xl mr-2">☕</Text>
+                <Ionicons name="checkmark-circle" size={22} color="#c17f59" style={{ marginRight: 8 }} />
                 <Text className="text-espresso font-semibold text-lg">
                   Dialed Recipe
                 </Text>

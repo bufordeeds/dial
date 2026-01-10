@@ -1,10 +1,22 @@
-import { View, Text, ScrollView, Pressable, TextInput, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  TextInput,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GrindStepper } from "@/components/GrindStepper";
 import { NumericInput } from "@/components/NumericInput";
 import { TasteTagPicker } from "@/components/TasteTagPicker";
+import { ShotCharacteristicPicker } from "@/components/ShotCharacteristicPicker";
+import { BrewMethodPicker } from "@/components/BrewMethodPicker";
 import { ShotTimer } from "@/components/ShotTimer";
 import { RatioDisplay } from "@/components/RatioDisplay";
 import { BeanSelector } from "@/components/BeanSelector";
@@ -12,7 +24,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getActiveBean, getLastShotForBean, createShot } from "@/lib/queries";
 import { DEFAULT_SHOT_VALUES } from "@/lib/constants";
-import type { Bean, TasteTag } from "@/lib/types";
+import type { Bean, TasteTag, BrewMethod, ShotCharacteristic } from "@/lib/types";
 
 export default function QuickLogScreen() {
   const [activeBean, setActiveBean] = useState<Bean | null>(null);
@@ -21,6 +33,8 @@ export default function QuickLogScreen() {
   const [yieldGrams, setYieldGrams] = useState(DEFAULT_SHOT_VALUES.yieldGrams);
   const [timeSeconds, setTimeSeconds] = useState(DEFAULT_SHOT_VALUES.timeSeconds);
   const [tasteTags, setTasteTags] = useState<TasteTag[]>([]);
+  const [shotCharacteristics, setShotCharacteristics] = useState<ShotCharacteristic[]>([]);
+  const [brewMethod, setBrewMethod] = useState<BrewMethod>("espresso");
   const [isDialed, setIsDialed] = useState(false);
   const [notes, setNotes] = useState("");
   const [showNotes, setShowNotes] = useState(false);
@@ -47,13 +61,16 @@ export default function QuickLogScreen() {
       setDoseGrams(lastShot.doseGrams);
       setYieldGrams(lastShot.yieldGrams);
       setTimeSeconds(lastShot.timeSeconds);
+      setBrewMethod(lastShot.brewMethod ?? "espresso");
     } else {
       setGrindSetting(DEFAULT_SHOT_VALUES.grindSetting);
       setDoseGrams(DEFAULT_SHOT_VALUES.doseGrams);
       setYieldGrams(DEFAULT_SHOT_VALUES.yieldGrams);
       setTimeSeconds(DEFAULT_SHOT_VALUES.timeSeconds);
+      setBrewMethod("espresso");
     }
     setTasteTags([]);
+    setShotCharacteristics([]);
     setIsDialed(false);
     setNotes("");
     setShowNotes(false);
@@ -79,17 +96,20 @@ export default function QuickLogScreen() {
         yieldGrams,
         timeSeconds,
         tasteTags,
+        shotCharacteristics,
+        brewMethod,
         isDialed,
         notes: notes.trim() || undefined,
       });
 
       Alert.alert(
-        isDialed ? "Dialed! ☕" : "Shot Saved",
+        isDialed ? "Dialed!" : "Shot Saved",
         "Ready for your next shot",
         [{ text: "OK" }]
       );
 
       setTasteTags([]);
+      setShotCharacteristics([]);
       setIsDialed(false);
       setNotes("");
       setShowNotes(false);
@@ -103,12 +123,22 @@ export default function QuickLogScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-coffee-900" edges={["bottom"]}>
-      <ScrollView
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
-        contentContainerStyle={{ padding: 16 }}
-        showsVerticalScrollIndicator={false}
+        keyboardVerticalOffset={100}
       >
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         <BeanSelector activeBean={activeBean} onBeanChange={handleBeanChange} />
+
+        <Card className="mt-4">
+          <BrewMethodPicker selected={brewMethod} onChange={setBrewMethod} />
+        </Card>
 
         <Card className="mt-4">
           <ShotTimer onTimeUpdate={setTimeSeconds} />
@@ -156,6 +186,13 @@ export default function QuickLogScreen() {
           <TasteTagPicker selected={tasteTags} onChange={setTasteTags} />
         </Card>
 
+        <Card className="mt-4">
+          <ShotCharacteristicPicker
+            selected={shotCharacteristics}
+            onChange={setShotCharacteristics}
+          />
+        </Card>
+
         <Pressable
           onPress={() => setIsDialed(!isDialed)}
           className={`mt-4 p-4 rounded-2xl border-2 ${
@@ -165,7 +202,12 @@ export default function QuickLogScreen() {
           }`}
         >
           <View className="flex-row items-center justify-center">
-            <Text className="text-2xl mr-2">☕</Text>
+            <Ionicons
+              name={isDialed ? "checkmark-circle" : "checkmark-circle-outline"}
+              size={24}
+              color={isDialed ? "#c17f59" : "#e8ddd4"}
+              style={{ marginRight: 8 }}
+            />
             <Text
               className={`text-lg font-semibold ${
                 isDialed ? "text-espresso" : "text-cream-200"
@@ -210,7 +252,8 @@ export default function QuickLogScreen() {
             Save Shot
           </Button>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

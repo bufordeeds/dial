@@ -33,6 +33,10 @@ export default function RootLayout() {
           name="shot/[id]"
           options={{ title: "Shot Details", presentation: "card" }}
         />
+        <Stack.Screen
+          name="changelog"
+          options={{ title: "What's New", presentation: "modal" }}
+        />
       </Stack>
     </>
   );

@@ -32,8 +32,10 @@ export async function initDatabase(): Promise<void> {
       yieldGrams REAL NOT NULL,
       timeSeconds INTEGER NOT NULL,
       tasteTags TEXT NOT NULL DEFAULT '[]',
+      shotCharacteristics TEXT NOT NULL DEFAULT '[]',
       isDialed INTEGER NOT NULL DEFAULT 0,
       drinkType TEXT,
+      brewMethod TEXT DEFAULT 'espresso',
       notes TEXT,
       createdAt TEXT NOT NULL,
       FOREIGN KEY (beanId) REFERENCES beans (id) ON DELETE CASCADE
@@ -43,4 +45,22 @@ export async function initDatabase(): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_shots_createdAt ON shots (createdAt);
     CREATE INDEX IF NOT EXISTS idx_beans_isActive ON beans (isActive);
   `);
+
+  // Migration: Add brewMethod column if it doesn't exist
+  try {
+    await database.runAsync(
+      "ALTER TABLE shots ADD COLUMN brewMethod TEXT DEFAULT 'espresso'"
+    );
+  } catch {
+    // Column already exists, ignore
+  }
+
+  // Migration: Add shotCharacteristics column if it doesn't exist
+  try {
+    await database.runAsync(
+      "ALTER TABLE shots ADD COLUMN shotCharacteristics TEXT NOT NULL DEFAULT '[]'"
+    );
+  } catch {
+    // Column already exists, ignore
+  }
 }

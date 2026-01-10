@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, Pressable, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useState, useCallback } from "react";
 import { useLocalSearchParams, useRouter, useFocusEffect, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -98,8 +99,9 @@ export default function ShotDetailScreen() {
                 </Text>
               </View>
               {shot.isDialed && (
-                <View className="bg-espresso/20 px-3 py-1 rounded-full">
-                  <Text className="text-espresso font-medium">☕ Dialed</Text>
+                <View className="bg-espresso/20 px-3 py-1 rounded-full flex-row items-center">
+                  <Ionicons name="checkmark-circle" size={14} color="#c17f59" style={{ marginRight: 4 }} />
+                  <Text className="text-espresso font-medium">Dialed</Text>
                 </View>
               )}
             </View>
@@ -154,7 +156,14 @@ export default function ShotDetailScreen() {
                       key={tag}
                       className="bg-coffee-700 px-3 py-2 rounded-full flex-row items-center"
                     >
-                      <Text className="mr-1">{tagInfo?.emoji}</Text>
+                      {tagInfo?.icon && (
+                        <Ionicons
+                          name={tagInfo.icon}
+                          size={14}
+                          color="#e8ddd4"
+                          style={{ marginRight: 6 }}
+                        />
+                      )}
                       <Text className="text-cream-100 font-medium">
                         {tagInfo?.label}
                       </Text>
@@ -168,7 +177,7 @@ export default function ShotDetailScreen() {
           {suggestions.length > 0 && (
             <Card className="mt-4 border border-espresso/50">
               <View className="flex-row items-center mb-3">
-                <Text className="text-lg mr-2">💡</Text>
+                <Ionicons name="bulb-outline" size={20} color="#c17f59" style={{ marginRight: 8 }} />
                 <Text className="text-espresso font-semibold">Dial Assistant</Text>
               </View>
               <View className="gap-3">
@@ -210,7 +219,12 @@ export default function ShotDetailScreen() {
             }`}
           >
             <View className="flex-row items-center justify-center">
-              <Text className="text-2xl mr-2">☕</Text>
+              <Ionicons
+                name={shot.isDialed ? "checkmark-circle" : "checkmark-circle-outline"}
+                size={24}
+                color={shot.isDialed ? "#c17f59" : "#e8ddd4"}
+                style={{ marginRight: 8 }}
+              />
               <Text
                 className={`text-lg font-semibold ${
                   shot.isDialed ? "text-espresso" : "text-cream-200"

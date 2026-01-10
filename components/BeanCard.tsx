@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { format, isValid, parseISO } from "date-fns";
 import type { Bean } from "@/lib/types";
 
@@ -42,7 +43,7 @@ export function BeanCard({ bean, shotCount = 0, hasDialedShot = false }: BeanCar
           <Text className="text-cream-400 text-sm mt-1">{bean.roaster}</Text>
         </View>
         {hasDialedShot && (
-          <Text className="text-xl">☕</Text>
+          <Ionicons name="checkmark-circle" size={24} color="#c17f59" />
         )}
       </View>
 

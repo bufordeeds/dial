@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO, isValid } from "date-fns";
 import { TASTE_TAGS } from "@/lib/constants";
 import type { ShotWithBean, TasteTag } from "@/lib/types";
@@ -23,8 +24,8 @@ export function ShotCard({ shot, showBean = true }: ShotCardProps) {
   const router = useRouter();
   const ratio = shot.doseGrams > 0 ? shot.yieldGrams / shot.doseGrams : 0;
 
-  const getTagEmoji = (tag: TasteTag) => {
-    return TASTE_TAGS.find((t) => t.value === tag)?.emoji || "";
+  const getTagIcon = (tag: TasteTag) => {
+    return TASTE_TAGS.find((t) => t.value === tag)?.icon;
   };
 
   return (
@@ -42,8 +43,9 @@ export function ShotCard({ shot, showBean = true }: ShotCardProps) {
           </Text>
         </View>
         {shot.isDialed && (
-          <View className="bg-espresso/20 px-2 py-1 rounded-full">
-            <Text className="text-espresso text-xs font-medium">☕ Dialed</Text>
+          <View className="bg-espresso/20 px-2 py-1 rounded-full flex-row items-center">
+            <Ionicons name="checkmark-circle" size={12} color="#c17f59" style={{ marginRight: 4 }} />
+            <Text className="text-espresso text-xs font-medium">Dialed</Text>
           </View>
         )}
       </View>
@@ -75,11 +77,18 @@ export function ShotCard({ shot, showBean = true }: ShotCardProps) {
         <Text className="text-espresso font-semibold">1:{ratio.toFixed(1)}</Text>
         {shot.tasteTags.length > 0 && (
           <View className="flex-row ml-3">
-            {shot.tasteTags.map((tag) => (
-              <Text key={tag} className="mr-1">
-                {getTagEmoji(tag)}
-              </Text>
-            ))}
+            {shot.tasteTags.map((tag) => {
+              const icon = getTagIcon(tag);
+              return icon ? (
+                <Ionicons
+                  key={tag}
+                  name={icon}
+                  size={14}
+                  color="#a89485"
+                  style={{ marginRight: 4 }}
+                />
+              ) : null;
+            })}
           </View>
         )}
       </View>

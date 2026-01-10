@@ -1,4 +1,5 @@
 import { View, Text, FlatList, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useState, useCallback } from "react";
 import { useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -74,7 +75,7 @@ export default function HistoryScreen() {
         ItemSeparatorComponent={() => <View className="h-3" />}
         ListEmptyComponent={
           <View className="items-center py-12">
-            <Text className="text-4xl mb-3">☕</Text>
+            <Ionicons name="cafe-outline" size={48} color="#a89485" style={{ marginBottom: 12 }} />
             <Text className="text-cream-400 text-center">
               {selectedBeanId
                 ? "No shots with this bean yet"

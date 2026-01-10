@@ -1,34 +1,40 @@
 import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { TASTE_TAGS } from "@/lib/constants";
-import type { TasteTag } from "@/lib/types";
+import { SHOT_CHARACTERISTICS } from "@/lib/constants";
+import type { ShotCharacteristic } from "@/lib/types";
 
-interface TasteTagPickerProps {
-  selected: TasteTag[];
-  onChange: (tags: TasteTag[]) => void;
+interface ShotCharacteristicPickerProps {
+  selected: ShotCharacteristic[];
+  onChange: (characteristics: ShotCharacteristic[]) => void;
 }
 
-export function TasteTagPicker({ selected, onChange }: TasteTagPickerProps) {
-  const toggleTag = (tag: TasteTag) => {
-    if (selected.includes(tag)) {
-      onChange(selected.filter((t) => t !== tag));
+export function ShotCharacteristicPicker({
+  selected,
+  onChange,
+}: ShotCharacteristicPickerProps) {
+  const toggleCharacteristic = (characteristic: ShotCharacteristic) => {
+    if (selected.includes(characteristic)) {
+      onChange(selected.filter((c) => c !== characteristic));
     } else {
-      onChange([...selected, tag]);
+      onChange([...selected, characteristic]);
     }
   };
 
   return (
     <View>
-      <Text className="text-cream-300 text-sm mb-3 uppercase tracking-wider">
-        Taste Notes
+      <Text className="text-cream-300 text-sm mb-1 uppercase tracking-wider">
+        Shot Characteristics
+      </Text>
+      <Text className="text-cream-400 text-xs mb-3">
+        Tap to describe your shot's appearance and texture
       </Text>
       <View className="flex-row flex-wrap gap-2">
-        {TASTE_TAGS.map(({ value, label, icon }) => {
+        {SHOT_CHARACTERISTICS.map(({ value, label, icon }) => {
           const isSelected = selected.includes(value);
           return (
             <Pressable
               key={value}
-              onPress={() => toggleTag(value)}
+              onPress={() => toggleCharacteristic(value)}
               className={`px-3 py-2 rounded-full flex-row items-center ${
                 isSelected
                   ? "bg-espresso"

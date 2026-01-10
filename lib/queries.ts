@@ -1,5 +1,5 @@
 import { getDatabase } from "./db";
-import type { Bean, Shot, ShotWithBean, TasteTag } from "./types";
+import type { Bean, Shot, ShotWithBean, TasteTag, BrewMethod, ShotCharacteristic } from "./types";
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -146,8 +146,8 @@ export async function createShot(
   const createdAt = new Date().toISOString();
 
   await db.runAsync(
-    `INSERT INTO shots (id, beanId, grindSetting, doseGrams, yieldGrams, timeSeconds, tasteTags, isDialed, drinkType, notes, createdAt)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO shots (id, beanId, grindSetting, doseGrams, yieldGrams, timeSeconds, tasteTags, shotCharacteristics, isDialed, drinkType, brewMethod, notes, createdAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       id,
       shot.beanId,
@@ -156,8 +156,10 @@ export async function createShot(
       shot.yieldGrams,
       shot.timeSeconds,
       JSON.stringify(shot.tasteTags),
+      JSON.stringify(shot.shotCharacteristics ?? []),
       shot.isDialed ? 1 : 0,
       shot.drinkType ?? null,
+      shot.brewMethod ?? "espresso",
       shot.notes ?? null,
       createdAt,
     ]
@@ -194,6 +196,10 @@ export async function updateShot(
     fields.push("tasteTags = ?");
     values.push(JSON.stringify(updates.tasteTags));
   }
+  if (updates.shotCharacteristics !== undefined) {
+    fields.push("shotCharacteristics = ?");
+    values.push(JSON.stringify(updates.shotCharacteristics));
+  }
   if (updates.isDialed !== undefined) {
     fields.push("isDialed = ?");
     values.push(updates.isDialed ? 1 : 0);
@@ -201,6 +207,10 @@ export async function updateShot(
   if (updates.drinkType !== undefined) {
     fields.push("drinkType = ?");
     values.push(updates.drinkType ?? null);
+  }
+  if (updates.brewMethod !== undefined) {
+    fields.push("brewMethod = ?");
+    values.push(updates.brewMethod ?? "espresso");
   }
   if (updates.notes !== undefined) {
     fields.push("notes = ?");
@@ -236,8 +246,10 @@ export async function getShots(beanId?: string): Promise<ShotWithBean[]> {
     yieldGrams: number;
     timeSeconds: number;
     tasteTags: string;
+    shotCharacteristics: string;
     isDialed: number;
     drinkType: string | null;
+    brewMethod: string | null;
     notes: string | null;
     createdAt: string;
     beanName: string;
@@ -252,8 +264,10 @@ export async function getShots(beanId?: string): Promise<ShotWithBean[]> {
     yieldGrams: row.yieldGrams,
     timeSeconds: row.timeSeconds,
     tasteTags: JSON.parse(row.tasteTags) as TasteTag[],
+    shotCharacteristics: JSON.parse(row.shotCharacteristics || "[]") as ShotCharacteristic[],
     isDialed: row.isDialed === 1,
     drinkType: row.drinkType as Shot["drinkType"],
+    brewMethod: (row.brewMethod ?? "espresso") as BrewMethod,
     notes: row.notes ?? undefined,
     createdAt: row.createdAt,
     beanName: row.beanName,
@@ -271,8 +285,10 @@ export async function getShot(id: string): Promise<ShotWithBean | null> {
     yieldGrams: number;
     timeSeconds: number;
     tasteTags: string;
+    shotCharacteristics: string;
     isDialed: number;
     drinkType: string | null;
+    brewMethod: string | null;
     notes: string | null;
     createdAt: string;
     beanName: string;
@@ -295,8 +311,10 @@ export async function getShot(id: string): Promise<ShotWithBean | null> {
     yieldGrams: row.yieldGrams,
     timeSeconds: row.timeSeconds,
     tasteTags: JSON.parse(row.tasteTags) as TasteTag[],
+    shotCharacteristics: JSON.parse(row.shotCharacteristics || "[]") as ShotCharacteristic[],
     isDialed: row.isDialed === 1,
     drinkType: row.drinkType as Shot["drinkType"],
+    brewMethod: (row.brewMethod ?? "espresso") as BrewMethod,
     notes: row.notes ?? undefined,
     createdAt: row.createdAt,
     beanName: row.beanName,
@@ -314,8 +332,10 @@ export async function getLastShotForBean(beanId: string): Promise<Shot | null> {
     yieldGrams: number;
     timeSeconds: number;
     tasteTags: string;
+    shotCharacteristics: string;
     isDialed: number;
     drinkType: string | null;
+    brewMethod: string | null;
     notes: string | null;
     createdAt: string;
   }>(
@@ -333,8 +353,10 @@ export async function getLastShotForBean(beanId: string): Promise<Shot | null> {
     yieldGrams: row.yieldGrams,
     timeSeconds: row.timeSeconds,
     tasteTags: JSON.parse(row.tasteTags) as TasteTag[],
+    shotCharacteristics: JSON.parse(row.shotCharacteristics || "[]") as ShotCharacteristic[],
     isDialed: row.isDialed === 1,
     drinkType: row.drinkType as Shot["drinkType"],
+    brewMethod: (row.brewMethod ?? "espresso") as BrewMethod,
     notes: row.notes ?? undefined,
     createdAt: row.createdAt,
   };
@@ -350,8 +372,10 @@ export async function getDialedShotForBean(beanId: string): Promise<Shot | null>
     yieldGrams: number;
     timeSeconds: number;
     tasteTags: string;
+    shotCharacteristics: string;
     isDialed: number;
     drinkType: string | null;
+    brewMethod: string | null;
     notes: string | null;
     createdAt: string;
   }>(
@@ -369,8 +393,10 @@ export async function getDialedShotForBean(beanId: string): Promise<Shot | null>
     yieldGrams: row.yieldGrams,
     timeSeconds: row.timeSeconds,
     tasteTags: JSON.parse(row.tasteTags) as TasteTag[],
+    shotCharacteristics: JSON.parse(row.shotCharacteristics || "[]") as ShotCharacteristic[],
     isDialed: row.isDialed === 1,
     drinkType: row.drinkType as Shot["drinkType"],
+    brewMethod: (row.brewMethod ?? "espresso") as BrewMethod,
     notes: row.notes ?? undefined,
     createdAt: row.createdAt,
   };

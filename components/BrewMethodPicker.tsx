@@ -1,34 +1,26 @@
 import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { TASTE_TAGS } from "@/lib/constants";
-import type { TasteTag } from "@/lib/types";
+import { BREW_METHODS } from "@/lib/constants";
+import type { BrewMethod } from "@/lib/types";
 
-interface TasteTagPickerProps {
-  selected: TasteTag[];
-  onChange: (tags: TasteTag[]) => void;
+interface BrewMethodPickerProps {
+  selected: BrewMethod;
+  onChange: (method: BrewMethod) => void;
 }
 
-export function TasteTagPicker({ selected, onChange }: TasteTagPickerProps) {
-  const toggleTag = (tag: TasteTag) => {
-    if (selected.includes(tag)) {
-      onChange(selected.filter((t) => t !== tag));
-    } else {
-      onChange([...selected, tag]);
-    }
-  };
-
+export function BrewMethodPicker({ selected, onChange }: BrewMethodPickerProps) {
   return (
     <View>
       <Text className="text-cream-300 text-sm mb-3 uppercase tracking-wider">
-        Taste Notes
+        Brew Method
       </Text>
       <View className="flex-row flex-wrap gap-2">
-        {TASTE_TAGS.map(({ value, label, icon }) => {
-          const isSelected = selected.includes(value);
+        {BREW_METHODS.map(({ value, label, icon }) => {
+          const isSelected = selected === value;
           return (
             <Pressable
               key={value}
-              onPress={() => toggleTag(value)}
+              onPress={() => onChange(value)}
               className={`px-3 py-2 rounded-full flex-row items-center ${
                 isSelected
                   ? "bg-espresso"
